@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -21,8 +23,8 @@ public class PostEditUserRes {
     private String website;
     private String bio;
 
-    private int nameUpdateCount;
-    private int nicknameUpdateCount;
+    private int userUpdateNameCount;
+    private LocalDateTime userUpdateNameTime;
 
     private String agree;
     private int state;

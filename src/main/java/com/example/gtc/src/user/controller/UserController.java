@@ -145,7 +145,6 @@ public class UserController {
         }
     }
 
-
     /**
      * 프로필 보기 API
      * [GET] http://localhost:8080/{nickname}
@@ -229,7 +228,83 @@ public class UserController {
         try{
             // jwt
             Long userId = jwtService.getUserIdx();
-            PostEditUserRes postEditUserRes = userService.editNickname(map.get("nickname"), map.get("change-nickname"),userId);
+            PostEditUserRes postEditUserRes = userService.editNickname(userId, map.get("change-nickname"));
+            return new BaseResponse<>(postEditUserRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 프로필 사진 변경 API
+     * [POST]  http://localhost:8080/users/edit-user-img
+     * @return BaseResponse<PostEditUserRes>
+     */
+    @ApiOperation(value = "프로필 사진 변경")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 1000, message = "OK"),
+            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
+            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
+            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+    })
+    @ResponseBody
+    @PostMapping("/users/edit-user-img")
+    public BaseResponse<PostEditUserRes> editUserImg(@RequestBody Map<String, String> map){
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            PostEditUserRes postEditUserRes = userService.editUserImg(userId, map.get("change-user-img"));
+            return new BaseResponse<>(postEditUserRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+    /**
+     * 웹사이트 변경 API
+     * [POST]  http://localhost:8080/users/edit-website
+     * @return BaseResponse<PostEditUserRes>
+     */
+    @ApiOperation(value = "웹사이트 변경")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 1000, message = "OK"),
+            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
+            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
+            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+    })
+    @ResponseBody
+    @PostMapping("/users/edit-website")
+    public BaseResponse<PostEditUserRes> editWebsite(@RequestBody Map<String, String> map){
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            PostEditUserRes postEditUserRes = userService.editWebsite(userId, map.get("change-website"));
+            return new BaseResponse<>(postEditUserRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+    /**
+     * 소개 변경 API
+     * [POST]  http://localhost:8080/users/edit-bio
+     * @return BaseResponse<PostEditUserRes>
+     */
+    @ApiOperation(value = "소개 변경")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 1000, message = "OK"),
+            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
+            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
+            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+    })
+    @ResponseBody
+    @PostMapping("/users/edit-bio")
+    public BaseResponse<PostEditUserRes> editBio(@RequestBody Map<String, String> map){
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            PostEditUserRes postEditUserRes = userService.editBio(userId, map.get("change-bio"));
             return new BaseResponse<>(postEditUserRes);
         } catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());

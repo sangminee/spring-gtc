@@ -1,6 +1,7 @@
 package com.example.gtc.src.user.service;
 
 import com.example.gtc.config.BaseException;
+import com.example.gtc.src.user.entity.User;
 import com.example.gtc.src.user.repository.dto.response.DeleteUserRes;
 import com.example.gtc.src.user.repository.dto.response.GetUserProfileRes;
 import com.example.gtc.src.user.repository.dto.response.PostEditUserRes;
@@ -25,12 +26,14 @@ public interface UserService {
     PostLoginRes logInEmail(PostLoginEmailReq postLoginReq) throws BaseException;
     PostLoginRes logInNickname(PostLoginNicknameReq postLoginReq) throws BaseException;
 
+    String decryptPassword(User user) throws BaseException;
+
     PostEditUserRes editPassword(String nickname, String password, Long userId) throws BaseException;
-    PostEditUserRes editUserImg(String nickname, String userImgUrl) throws BaseException;
-    PostEditUserRes editWebsite(String nickname, String website) throws BaseException;
-    PostEditUserRes editBio(String nickname, String bio) throws BaseException;
+    PostEditUserRes editUserImg(Long userId, String userImgUrl) throws BaseException;
+    PostEditUserRes editWebsite(Long userId, String website) throws BaseException;
+    PostEditUserRes editBio(Long userId, String bio) throws BaseException;
     PostEditUserRes editName(String nickname, String name) throws BaseException;
-    PostEditUserRes editNickname(String nickname, String changeNickname, Long userId) throws BaseException;
+    PostEditUserRes editNickname(Long userId, String changeNickname) throws BaseException;
     PostEditUserRes editState(String nickname, int state) throws BaseException;
 
     DeleteUserRes deleteUser(String nickname, String password, Long userId) throws BaseException;

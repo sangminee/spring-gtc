@@ -37,8 +37,8 @@ public class User {
     private String bio;
     private LocalDateTime userCreateTime;
     private LocalDateTime loginTime;
-    private int nameUpdateCount;
-    private int nicknameUpdateCount;
+    private int userUpdateNameCount;
+    private LocalDateTime userUpdateNameTime;
     private String agree;
     private int state;
 

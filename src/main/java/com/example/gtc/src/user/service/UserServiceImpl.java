@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.example.gtc.config.BaseResponseStatus.*;
@@ -160,7 +161,7 @@ public class UserServiceImpl implements UserService{
                 return new PostEditUserRes("비밀번호가 변경되었습니다.", user.get().getNickname(),
                         user.get().getName(),password,
                         user.get().getUserImgUrl(),user.get().getWebsite(),
-                        user.get().getBio(), user.get().getNameUpdateCount(), user.get().getNicknameUpdateCount(),
+                        user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
                         user.get().getAgree(), user.get().getState());
 
             }else{
@@ -173,18 +174,61 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public PostEditUserRes editUserImg(String nickname, String userImgUrl) throws BaseException {
-        return null;
+    public String decryptPassword(User user) throws BaseException {
+        try {
+            String password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(user.getPassword());
+            return password;
+        } catch (Exception ignored) {
+            throw new BaseException(PASSWORD_DECRYPTION_ERROR);
+        }
     }
 
     @Override
-    public PostEditUserRes editWebsite(String nickname, String website) throws BaseException {
-        return null;
+    public PostEditUserRes editUserImg(Long userId, String userImgUrl) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        if(!user.isEmpty() && user.get().getState()==0 || user.get().getState()==1){
+            user.get().setUserImgUrl(userImgUrl);
+            userJpaRepository.save(user.get());
+            return new PostEditUserRes("사용자 사진이 변경되었습니다.", user.get().getNickname(),
+                    user.get().getName(),this.decryptPassword(user.get()),
+                    user.get().getUserImgUrl(),user.get().getWebsite(),
+                    user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
+                    user.get().getAgree(), user.get().getState());
+        }else{
+            throw new BaseException(INVALID_USER_JWT);
+        }
     }
 
     @Override
-    public PostEditUserRes editBio(String nickname, String bio) throws BaseException {
-        return null;
+    public PostEditUserRes editWebsite(Long userId, String website) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        if(!user.isEmpty() && user.get().getState()==0 || user.get().getState()==1){
+            user.get().setWebsite(website);
+            userJpaRepository.save(user.get());
+            return new PostEditUserRes("웹사이트가 변경되었습니다.", user.get().getNickname(),
+                    user.get().getName(),this.decryptPassword(user.get()),
+                    user.get().getUserImgUrl(),user.get().getWebsite(),
+                    user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
+                    user.get().getAgree(), user.get().getState());
+        }else{
+            throw new BaseException(INVALID_USER_JWT);
+        }
+    }
+
+    @Override
+    public PostEditUserRes editBio(Long userId, String bio) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        if(!user.isEmpty() && user.get().getState()==0 || user.get().getState()==1){
+            user.get().setBio(bio);
+            userJpaRepository.save(user.get());
+            return new PostEditUserRes("소개가 변경되었습니다.", user.get().getNickname(),
+                    user.get().getName(),this.decryptPassword(user.get()),
+                    user.get().getUserImgUrl(),user.get().getWebsite(),
+                    user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
+                    user.get().getAgree(), user.get().getState());
+        }else{
+            throw new BaseException(INVALID_USER_JWT);
+        }
     }
 
     @Override
@@ -193,30 +237,24 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public PostEditUserRes editNickname(String nickname, String changeNickname, Long userId) throws BaseException {
-        Optional<User> user = userJpaRepository.findByNickname(nickname);
-        if(user.get().getUserId().equals(userId)){
+    public PostEditUserRes editNickname(Long userId, String changeNickname) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        if(!user.isEmpty()){
             if(!user.get().getNickname().equals(changeNickname)){
                 // 사용자 이름 중복 검사
                 this.checkUserNickname(changeNickname);
-
-                // 2 이상일 경우 14일 동안 변경 불가
-                if(user.get().getNicknameUpdateCount() <=2){
-                    user.get().setNicknameUpdateCount(user.get().getNicknameUpdateCount()+1);
+                // 변경 카운트가 2 이상일 경우 14일 동안 변경 불가
+                if(user.get().getUserUpdateNameCount() <=2){
+                    user.get().setUserUpdateNameCount(user.get().getUserUpdateNameCount() + 1);
                     user.get().setNickname(changeNickname);
+                    user.get().setUserUpdateNameTime(LocalDateTime.now());
                     userJpaRepository.save(user.get());
-                    // 비번
-                    String password;
-                    try {
-                        password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(user.get().getPassword());
-                    } catch (Exception ignored) {
-                        throw new BaseException(PASSWORD_DECRYPTION_ERROR);
-                    }
                     return new PostEditUserRes("사용자 이름이 변경되었습니다.", user.get().getNickname(),
-                            user.get().getName(),password,
+                            user.get().getName(),this.decryptPassword(user.get()),
                             user.get().getUserImgUrl(),user.get().getWebsite(),
-                            user.get().getBio(), user.get().getNameUpdateCount(), user.get().getNicknameUpdateCount(),
+                            user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
                             user.get().getAgree(), user.get().getState());
+
                 }else{
                     throw new BaseException(FAILED_TO_NICKNAME_COUNT);
                 }
