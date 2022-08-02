@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "게시글 작성 완료")
-public class PostWriteRes {
+@ApiModel(description = "게시글 작성/ 게시글 좋아요/ 댓글 달기")
+public class PostRes {
     private String message;
 }

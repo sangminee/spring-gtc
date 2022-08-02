@@ -23,4 +23,11 @@ public class PostLike {
     @ManyToOne
     @JoinColumn(name="userId")
     private User user;
+
+    public static PostLike toEntity(Post post, User user) {
+        PostLike postLike = new PostLike();
+        postLike.setPost(post);
+        postLike.setUser(user);
+        return postLike;
+    }
 }

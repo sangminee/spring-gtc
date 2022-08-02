@@ -16,10 +16,17 @@ public class PostTag {
     private Long tagId;  // 시스템이 저장하는 id
 
     @ManyToOne
-    @JoinColumn(name="postId")
+    @JoinColumn(name="postId")  // post를 작성한 사람이 tag의 유저
     private Post post;
 
     @ManyToOne
     @JoinColumn(name="userId")
     private User user;
+
+    public static PostTag toEntity(Post post, User user) {
+        PostTag postTag = new PostTag();
+        postTag.setPost(post);
+        postTag.setUser(user);
+        return postTag;
+    }
 }
