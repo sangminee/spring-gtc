@@ -40,6 +40,8 @@ public class User {
     private int userUpdateNameCount;
     private LocalDateTime userUpdateNameTime;
     private String agree;
+
+    private int joinType;
     private int state;
 
 

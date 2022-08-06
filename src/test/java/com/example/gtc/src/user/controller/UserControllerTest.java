@@ -1,29 +1,18 @@
 package com.example.gtc.src.user.controller;
 
 import com.example.gtc.config.BaseException;
-import com.example.gtc.config.secret.Secret;
-import com.example.gtc.src.user.entity.User;
+import com.example.gtc.src.user.repository.FollowingJpaRepository;
 import com.example.gtc.src.user.repository.UserJpaRepository;
 import com.example.gtc.src.user.repository.dto.request.PostUserPhoneJoinReq;
-import com.example.gtc.src.user.repository.dto.response.GetUserProfileRes;
 import com.example.gtc.src.user.repository.dto.response.PostJoinUserRes;
 import com.example.gtc.src.user.service.UserServiceImpl;
-import com.example.gtc.src.user.service.UserServiceImplTest;
-import com.example.gtc.utils.AES128;
 import com.example.gtc.utils.JwtService;
 import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.example.gtc.config.BaseResponseStatus.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class UserControllerTest {
@@ -34,11 +23,13 @@ public class UserControllerTest {
     JwtService jwtService;
     @Autowired
     UserJpaRepository userJpaRepository;
+    @Autowired
+    FollowingJpaRepository followingJpaRepository;
 
     @BeforeEach // test 실행전에 무조건 실행됨
     public void beferEach(){
         jwtService = new JwtService();
-        userService = new UserServiceImpl(userJpaRepository,jwtService);
+        userService = new UserServiceImpl(userJpaRepository, followingJpaRepository, jwtService);
     }
 
     @After("")

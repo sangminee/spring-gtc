@@ -2,16 +2,14 @@ package com.example.gtc.src.user.service;
 
 import com.example.gtc.config.BaseException;
 import com.example.gtc.src.user.entity.User;
-import com.example.gtc.src.user.repository.dto.response.DeleteUserRes;
-import com.example.gtc.src.user.repository.dto.response.GetUserProfileRes;
-import com.example.gtc.src.user.repository.dto.response.PostEditUserRes;
+import com.example.gtc.src.user.repository.dto.response.*;
 import com.example.gtc.src.user.repository.dto.request.PostUserEmailJoinReq;
-import com.example.gtc.src.user.repository.dto.response.PostJoinUserRes;
 import com.example.gtc.src.user.repository.dto.request.PostUserPhoneJoinReq;
 import com.example.gtc.src.user.repository.dto.request.PostLoginEmailReq;
 import com.example.gtc.src.user.repository.dto.request.PostLoginNicknameReq;
 import com.example.gtc.src.user.repository.dto.request.PostLoginPhoneReq;
-import com.example.gtc.src.user.repository.dto.response.PostLoginRes;
+
+import java.util.List;
 
 public interface UserService {
     GetUserProfileRes retrieveUserProfile(String userId, Long id) throws BaseException;
@@ -37,4 +35,7 @@ public interface UserService {
     PostEditUserRes editState(String nickname, int state) throws BaseException;
 
     DeleteUserRes deleteUser(String nickname, String password, Long userId) throws BaseException;
+
+    // Follower
+    List<PostFollowerRes> createFollower(Long userId, String followingNickname) throws BaseException;
 }

@@ -2,18 +2,16 @@ package com.example.gtc.src.user.service;
 
 import com.example.gtc.config.BaseException;
 import com.example.gtc.config.secret.Secret;
+import com.example.gtc.src.user.entity.Following;
 import com.example.gtc.src.user.entity.User;
+import com.example.gtc.src.user.repository.FollowingJpaRepository;
 import com.example.gtc.src.user.repository.UserJpaRepository;
-import com.example.gtc.src.user.repository.dto.response.DeleteUserRes;
-import com.example.gtc.src.user.repository.dto.response.GetUserProfileRes;
-import com.example.gtc.src.user.repository.dto.response.PostEditUserRes;
+import com.example.gtc.src.user.repository.dto.response.*;
 import com.example.gtc.src.user.repository.dto.request.PostUserEmailJoinReq;
-import com.example.gtc.src.user.repository.dto.response.PostJoinUserRes;
 import com.example.gtc.src.user.repository.dto.request.PostUserPhoneJoinReq;
 import com.example.gtc.src.user.repository.dto.request.PostLoginEmailReq;
 import com.example.gtc.src.user.repository.dto.request.PostLoginNicknameReq;
 import com.example.gtc.src.user.repository.dto.request.PostLoginPhoneReq;
-import com.example.gtc.src.user.repository.dto.response.PostLoginRes;
 import com.example.gtc.utils.AES128;
 import com.example.gtc.utils.JwtService;
 import org.slf4j.Logger;
@@ -21,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.gtc.config.BaseResponseStatus.*;
@@ -30,10 +30,13 @@ public class UserServiceImpl implements UserService{
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserJpaRepository userJpaRepository;
+    private final FollowingJpaRepository followingJpaRepository;
     private final JwtService jwtService;
 
-    public UserServiceImpl(UserJpaRepository userJpaRepository, JwtService jwtService) {
+    public UserServiceImpl(UserJpaRepository userJpaRepository,
+                           FollowingJpaRepository followingJpaRepository, JwtService jwtService) {
         this.userJpaRepository = userJpaRepository;
+        this.followingJpaRepository = followingJpaRepository;
         this.jwtService = jwtService;
     }
 
@@ -76,6 +79,7 @@ public class UserServiceImpl implements UserService{
             }else{
                 user.setState(0);
             }
+            user.setJoinType(0);
             userJpaRepository.save(user);
 
             return new PostJoinUserRes("회원가입이 완료되었습니다.", user.getNickname());
@@ -293,6 +297,38 @@ public class UserServiceImpl implements UserService{
             }
         }else{
             throw new BaseException(INVALID_USER_JWT);
+        }
+    }
+
+    // Follower
+    @Override
+    public List<PostFollowerRes> createFollower(Long userId, String followingNickname) throws BaseException{
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        Optional<User> follower = userJpaRepository.findByNickname(followingNickname);
+
+        if(!follower.isEmpty()){
+            Following myfollowing = Following.toEntity(user.get(),follower.get());
+            Following theotherFollowing = Following.toEntity(follower.get(),user.get());
+            followingJpaRepository.save(myfollowing);
+            followingJpaRepository.save(theotherFollowing);
+
+            PostFollowerRes getMyFollowing = new PostFollowerRes("유저의 팔로우 정보입니다.",
+                    myfollowing.getUser().getNickname(),
+                    myfollowing.getFollowingNickname(),
+                    myfollowing.getAgree(),
+                    myfollowing.getState());
+            PostFollowerRes getTheotherFollowing = new PostFollowerRes("상대방이 가지고 있는 유저 정보입니다.",
+                    theotherFollowing.getUser().getNickname(),
+                    theotherFollowing.getFollowingNickname(),
+                    theotherFollowing.getAgree(),
+                    theotherFollowing.getState());
+            List list = new ArrayList();
+            list.add(getMyFollowing);
+            list.add(getTheotherFollowing);
+
+            return list;
+        }else{
+            throw new BaseException(EMPTY_USER);
         }
     }
 }
