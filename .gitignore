@@ -19,7 +19,7 @@ bin/
 
 application.properties
 Secret
-KakaoServiceImpl
+KakaoServiceImpl.java
 
 ### IntelliJ IDEA ###
 .idea
