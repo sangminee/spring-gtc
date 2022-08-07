@@ -10,16 +10,9 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 
 
 
+
 ## 폴더 구조  
-1. entity 
-2. controller 
-3. service 
-  - service.class
-  - serviceImpl.class
-4. repository 
-  - dto 
-     - request
-     - response 
-  - jpaRepository.interface
+
+![image](https://user-images.githubusercontent.com/81500474/183298680-5e5e7c4c-9207-4a3f-8f28-98dabe7034fd.png)
 
 ## 개발 API 
