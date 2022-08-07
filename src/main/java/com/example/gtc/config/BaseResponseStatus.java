@@ -31,6 +31,7 @@ public enum BaseResponseStatus {
     EMPTY_FROM_USER(false, 2010, "채팅을 보낼 사용자 이름을 입력해 주세요."),
     DUPLICATED_FROM_USER(false, 2011, "중복된 채팅방이 존재합니다."),
     INVALID_REPORT_USER(false, 2012, "신고를 한 사용자가 아닙니다."),
+    EMPTY_POST(false, 2013, "존재하지 않는 게시물입니다."),
 
     // USER
     // [POST]

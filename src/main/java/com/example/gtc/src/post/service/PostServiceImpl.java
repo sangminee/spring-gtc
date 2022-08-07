@@ -1,16 +1,13 @@
 package com.example.gtc.src.post.service;
 
 import com.example.gtc.config.BaseException;
-import com.example.gtc.src.post.entity.Photo;
-import com.example.gtc.src.post.entity.Post;
-import com.example.gtc.src.post.entity.PostLike;
-import com.example.gtc.src.post.entity.PostTag;
-import com.example.gtc.src.post.repository.PhotoJpaRepository;
-import com.example.gtc.src.post.repository.PostJpaRepository;
-import com.example.gtc.src.post.repository.PostLikeJpaRepository;
-import com.example.gtc.src.post.repository.PostTagJpaRepository;
+import com.example.gtc.global.ReportList;
+import com.example.gtc.global.ReportListJpaRepository;
+import com.example.gtc.src.post.entity.*;
+import com.example.gtc.src.post.repository.*;
 import com.example.gtc.src.post.repository.dto.request.PostTagReq;
 import com.example.gtc.src.post.repository.dto.request.PostWriteReq;
+import com.example.gtc.src.post.repository.dto.response.GetPost;
 import com.example.gtc.src.post.repository.dto.response.PostRes;
 import com.example.gtc.src.user.entity.User;
 import com.example.gtc.src.user.repository.UserJpaRepository;
@@ -20,8 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.gtc.config.BaseResponseStatus.*;
 
@@ -34,15 +30,19 @@ public class PostServiceImpl implements PostService{
     private final PostLikeJpaRepository postLikeJpaRepository;
     private final PostTagJpaRepository postTagJpaRepository;
     private final UserJpaRepository userJpaRepository;
+    private final ReportListJpaRepository reportListJpaRepository;
+    private final PostReportJpaRepository postReportJpaRepository;
     private final JwtService jwtService;
 
     public PostServiceImpl(PostJpaRepository postJpaRepository, PhotoJpaRepository photoJpaRepository,
-                           PostLikeJpaRepository postLikeJpaRepository, PostTagJpaRepository postTagJpaRepository, UserJpaRepository userJpaRepository, JwtService jwtService) {
+                           PostLikeJpaRepository postLikeJpaRepository, PostTagJpaRepository postTagJpaRepository, UserJpaRepository userJpaRepository, ReportListJpaRepository reportListJpaRepository, PostReportJpaRepository postReportJpaRepository, JwtService jwtService) {
         this.postJpaRepository = postJpaRepository;
         this.photoJpaRepository = photoJpaRepository;
         this.postLikeJpaRepository = postLikeJpaRepository;
         this.postTagJpaRepository = postTagJpaRepository;
         this.userJpaRepository = userJpaRepository;
+        this.reportListJpaRepository = reportListJpaRepository;
+        this.postReportJpaRepository = postReportJpaRepository;
         this.jwtService = jwtService;
     }
 
@@ -121,6 +121,35 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    public PostRes createPostReport(Long userId, Long postId, Long reportId) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        Optional<Post> post = postJpaRepository.findById(postId);
+        Optional<ReportList> reportList = reportListJpaRepository.findById(reportId);
+
+        if(user.isEmpty()){
+            throw new BaseException(INVALID_USER_JWT);
+        }
+        if(post.isEmpty()){
+            throw new BaseException(EMPTY_POST);
+        }
+        if(reportList.isEmpty()){
+            throw new BaseException(EMPTY_REPORT);
+        }
+
+        try {
+            PostReport postReport =PostReport.toEntity(post.get(),user.get(),reportList.get());
+            postReportJpaRepository.save(postReport);
+
+            post.get().setState(2);
+            postJpaRepository.save(post.get());
+
+            return new PostRes("게시물이 신고되었습니다.");
+        }catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Override
     public PostRes deletePostLike(Long userId, int postId) throws BaseException {
         List<PostLike> all = postLikeJpaRepository.findAll();
 
@@ -164,6 +193,109 @@ public class PostServiceImpl implements PostService{
             }
         }
         throw new BaseException(INVALID_USER_JWT);
+    }
+
+    @Override
+    public List<GetPost> getMyPosts(Long userId) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        if(user.isEmpty()){
+            throw new BaseException(INVALID_USER_JWT);
+        }
+        List<Post> allPostList = postJpaRepository.findAll();
+
+        try {
+            List<GetPost> getPosts = new ArrayList<>();
+
+            for(int i=0; i<allPostList.size(); i++){
+                if(allPostList.get(i).getUser().equals(user.get())){
+                    getPosts.add(this.getPost(allPostList.get(i).getPostId()));
+                }
+            }
+            return getPosts;
+
+        }catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    public GetPost getPost(Long postId) throws BaseException {
+        Optional<Post> post = postJpaRepository.findById(postId);
+
+        List<PostLike> allPostLike = postLikeJpaRepository.findAll();
+        List<Photo> allPostPhoto = photoJpaRepository.findAll();
+
+        if(post.isEmpty()){
+            throw new BaseException(EMPTY_POST);
+        }
+
+        try {
+            int likeSum = 0;
+            for(int i=0; i<allPostLike.size(); i++){
+                if(allPostLike.get(i).getPost().equals(post.get())){
+                    likeSum++;
+                }
+            }
+            ArrayList<String> photoUrlList = new ArrayList<>();
+
+            for(int i=0; i < allPostPhoto.size(); i++){
+                if(allPostPhoto.get(i).getPost().equals(post.get())){
+                    photoUrlList.add(allPostPhoto.get(i).getPhotoUrl());
+                }
+            }
+
+            return new GetPost(post.get().getPostId(),
+                    post.get().getUser().getUserId(),
+                    post.get().getUser().getNickname(),
+                    post.get().getPostContent(),
+                    post.get().getPostCreateTime(),
+                    post.get().getPostUpdateTime(),
+                    post.get().getState(),
+                    photoUrlList, likeSum);
+        }catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    public GetPost updatePost(Long userId, Long postId, String content) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        Optional<Post> post = postJpaRepository.findById(postId);
+
+        List<Photo> allPostPhoto = photoJpaRepository.findAll();
+        List<PostLike> allPostLike = postLikeJpaRepository.findAll();
+
+        if(user.isEmpty()){
+            throw new BaseException(INVALID_USER_JWT);
+        }
+        try {
+
+            post.get().setPostContent(content);
+            postJpaRepository.save(post.get());
+
+            int likeSum = 0;
+            for(int i=0; i<allPostLike.size(); i++){
+                if(allPostLike.get(i).getPost().equals(post.get())){
+                    likeSum++;
+                }
+            }
+            ArrayList<String> photoUrlList = new ArrayList<String>();
+            for(int i=0; i<allPostPhoto.size(); i++){
+                if(allPostPhoto.get(i).getPost().equals(post.get())){
+                    photoUrlList.add(allPostPhoto.get(i).getPhotoUrl());
+                }
+            }
+            return new GetPost(post.get().getPostId(),
+                    post.get().getUser().getUserId(),
+                    post.get().getUser().getNickname(),
+                    post.get().getPostContent(),
+                    post.get().getPostCreateTime(),
+                    post.get().getPostUpdateTime(),
+                    post.get().getState(),
+                    photoUrlList, likeSum);
+        }catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
 }

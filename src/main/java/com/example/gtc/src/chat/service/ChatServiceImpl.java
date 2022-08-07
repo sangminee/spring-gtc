@@ -49,7 +49,7 @@ public class ChatServiceImpl implements ChatService{
 
         boolean flag = false;
         for(int i=0; i<allChatRoom.size(); i++){
-            if(allChatRoom.get(i).getFromUserId().equals(fromUserId)){
+            if(allChatRoom.get(i).getFromUserId().equals(fromUser.get())){
                 flag = true;
             }
         }

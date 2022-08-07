@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.example.gtc.config.BaseResponseStatus.*;
@@ -124,6 +125,28 @@ public class PostController {
      * [POST]  http://localhost:8080/post/{postId}/post-report
      * @return BaseResponse<?>
      */
+    @ApiOperation(value = "게시물 신고")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 200, message = "OK",response = PostRes.class),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
+            @ApiResponse(code = 2013, message = "{nickname}은 존재하지 않는 사용자입니다.."),
+            @ApiResponse(code = 2004, message = "권한이 없는 유저의 접근입니다.")
+    })
+    @PostMapping("/post/{postId}/post-report")
+    public BaseResponse<?> createPostReport(@PathVariable Long postId,
+                                            @RequestBody Map<String, Long> map){
+        if (map.get("report-Id").equals(" ")) {
+            return new BaseResponse<>(EMPTY_REPORT_ID);
+        }
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            PostRes postRes = postService.createPostReport(userId,postId,map.get("report-Id"));
+            return new BaseResponse(postRes);
+        }catch(BaseException exception){
+            return new BaseResponse((exception.getStatus()));
+        }
+    }
 
     // 2. read
 
@@ -132,42 +155,42 @@ public class PostController {
      * [Get]  http://localhost:8080/post/{postId}
      * @return BaseResponse<?>
      */
-//    @ApiOperation(value = "게시글 조회 (자신이 작성한 글 전체)")
-//    @ApiResponses({  // Response Message에 대한 Swagger 설명
-//            @ApiResponse(code = 200, message = "OK",response = GetPost.class),
-//            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
-//            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
-//    })
-//    @GetMapping("/post/{postId}")
-//    public BaseResponse<?> getMyPosts(@PathVariable int postId){
-//        try{
-//            // jwt
-//            Long userId = jwtService.getUserIdx();
-//            GetPost getPost = postService.getMyPosts(userId,postId);
-//            return new BaseResponse(getPost);
-//        }catch(BaseException exception){
-//            return new BaseResponse((exception.getStatus()));
-//        }
-//    }
+    @ApiOperation(value = "게시글 조회 (자신이 작성한 글 전체)")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 200, message = "OK",response = GetPost.class),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
+            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
+    })
+    @GetMapping("/post")
+    public BaseResponse<?> getMyPosts(){
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            List<GetPost> getPostlist = postService.getMyPosts(userId);
+            return new BaseResponse(getPostlist);
+        }catch(BaseException exception){
+            return new BaseResponse((exception.getStatus()));
+        }
+    }
 
     /**
      * 게시물 조회 API (하나)
      * [Get]  http://localhost:8080/post/{postId}
      * @return BaseResponse<?>
      */
-//    @ApiOperation(value = "게시글 조회 (하나)")
-//    @ApiResponses({     // Response Message에 대한 Swagger 설명
-//            @ApiResponse(code = 200, message = "OK",response = GetPost.class)
-//    })
-//    @GetMapping("/post/{postId}")
-//    public BaseResponse<?> getPost(@PathVariable int postId){
-//        try{
-//            GetPost getPost = postService.getPost(postId);
-//            return new BaseResponse(getPost);
-//        }catch(BaseException exception){
-//            return new BaseResponse((exception.getStatus()));
-//        }
-//    }
+    @ApiOperation(value = "게시글 조회 (하나)")
+    @ApiResponses({     // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 200, message = "OK",response = GetPost.class)
+    })
+    @GetMapping("/post/{postId}")
+    public BaseResponse<?> getPost(@PathVariable Long postId){
+        try{
+            GetPost getPost = postService.getPost(postId);
+            return new BaseResponse(getPost);
+        }catch(BaseException exception){
+            return new BaseResponse((exception.getStatus()));
+        }
+    }
 
     /**
      * 게시물 조회 API (팔로잉한 친구들의 글까지 모두)
@@ -182,24 +205,30 @@ public class PostController {
      * [POST]  http://localhost:8080/post/{postId}
      * @return BaseResponse<?>
      */
-//    @ApiOperation(value = "게시물 수정")
-//    @ApiResponses({  // Response Message에 대한 Swagger 설명
-//            @ApiResponse(code = 200, message = "OK",response = GetPost.class),
-//            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
-//            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
-//    })
-//    @GetMapping("/post/{postId}")
-//    public BaseResponse<?> updatePosts(@PathVariable int postId,
-//                                       @RequestBody Map<String, String> map){
-//        try{
-//            // jwt
-//            Long userId = jwtService.getUserIdx();
-//            GetPost getPost = postService.updatePosts(userId,postId);
-//            return new BaseResponse(getPost);
-//        }catch(BaseException exception){
-//            return new BaseResponse((exception.getStatus()));
-//        }
-//    }
+    @ApiOperation(value = "게시물 수정")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 200, message = "OK",response = GetPost.class),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
+            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
+    })
+    @PostMapping("/post/{postId}")
+    public BaseResponse<?> updatePosts(@PathVariable Long postId,
+                                       @RequestBody Map<String, String> map){
+        if (map.get("post-content").equals(" ")) {
+            return new BaseResponse<>(POST_POSTS_EMPTY_CONTENT);
+        }
+        if (map.get("post-content").length() >= 2000) {
+            return new BaseResponse<>(POST_POSTS_OVER_CONTENT);
+        }
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            GetPost getPost = postService.updatePost(userId, postId, map.get("post-content"));
+            return new BaseResponse(getPost);
+        }catch(BaseException exception){
+            return new BaseResponse((exception.getStatus()));
+        }
+    }
 
     // 4. delete
     /**

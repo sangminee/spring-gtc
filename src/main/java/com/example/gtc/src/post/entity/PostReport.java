@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,5 +29,17 @@ public class PostReport {
     @JoinColumn(name="reportListId")
     private ReportList reportList;
 
+    private LocalDateTime postReportTime;
+
     private int state;
+
+    public static PostReport toEntity(Post post, User user, ReportList reportList) {
+        PostReport postReport = new PostReport();
+        postReport.setPost(post);
+        postReport.setUser(user);
+        postReport.setReportList(reportList);
+        postReport.setPostReportTime(LocalDateTime.now());
+        postReport.setState(0);
+        return postReport;
+    }
 }
