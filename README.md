@@ -12,6 +12,6 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 
 ## 폴더 구조  
 
-![image](https://user-images.githubusercontent.com/81500474/183298680-5e5e7c4c-9207-4a3f-8f28-98dabe7034fd.png)
+![image](https://user-images.githubusercontent.com/81500474/183299842-4834ccab-6e7e-451c-ae06-f54c3e70ceb0.png)
 
 ## 개발 API 
