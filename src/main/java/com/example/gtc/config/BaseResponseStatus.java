@@ -25,6 +25,13 @@ public enum BaseResponseStatus {
     EMPTY_USER(false, 2004, "존재하지 않는 사용자입니다."),
     INVALID__USER(false, 2005, "유효하지 않은 사용자입니다."),
 
+    EMPTY_COMMENT(false, 2006, "존재하지 않는 댓글입니다."),
+    EMPTY_COMMENT_LIKE(false, 2007, "댓글 좋아요가 존재하지 않습니다."),
+    EMPTY_REPORT(false, 2009, "존재하지 않는 신고리스트입니다."),
+    EMPTY_FROM_USER(false, 2010, "채팅을 보낼 사용자 이름을 입력해 주세요."),
+    DUPLICATED_FROM_USER(false, 2011, "중복된 채팅방이 존재합니다."),
+    INVALID_REPORT_USER(false, 2012, "신고를 한 사용자가 아닙니다."),
+
     // USER
     // [POST]
     POST_USERS_EMPTY_EMAIL(false, 2010, "이메일을 입력해주세요."),
@@ -47,6 +54,16 @@ public enum BaseResponseStatus {
     POST_POSTS_OVER_CONTENT(false, 2041, "글자수를 확인해 주세요."),
 
     POST_POSTS_EXISTENT_LIKE(false, 2042, "이미 좋아요가 되어있습니다."),
+
+    // COMMENT
+    POST_COMMENTS_EMPTY_CONTENT(false, 2050, "댓글 내용을 입력해 주세요."),
+    POST_COMMENTS_OVER_CONTENT(false, 2051, "글자수를 확인해 주세요."),
+    POST_COMMENTS_EMPTY_CONTENT_ID(false, 2052, "댓글 Id를 입력해 주세요."),
+    POST_COMMENTS_EMPTY_CONTENT_LIKE_ID(false, 2053, "댓글 좋아요 Id를 입력해 주세요."),
+
+    // REPORT
+    EMPTY_REPORT_ID(false, 2060, "신고 Id를 입력해 주세요."),
+
     /**
      * 3000 : Response 오류
      */
@@ -75,6 +92,7 @@ public enum BaseResponseStatus {
     FAILED_TO_NICKNAME_COUNT(false,3037,"2번이상 변경하셨습니다. 마지막 변경일에서 14일을 뒤에 시도하세요."),
 
     FAILED_TO_USER_DELETE(false,3040,"계정삭제에 실패했습니다."),
+
 
     /**
      * 4000 : Database, Server 오류

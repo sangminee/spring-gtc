@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,4 +23,14 @@ public class CommentLike {
     @ManyToOne
     @JoinColumn(name="userId")
     private User user;
+
+    private LocalDateTime commentCreateTime;
+
+    public static CommentLike toEntity(User user, Comment comment) {
+        CommentLike commentLike = new CommentLike();
+        commentLike.setComment(comment);
+        commentLike.setUser(user);
+        commentLike.setCommentCreateTime(LocalDateTime.now());
+        return commentLike;
+    }
 }

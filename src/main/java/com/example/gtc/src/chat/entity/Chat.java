@@ -20,7 +20,7 @@ public class Chat{
     private ChatRoom chatRoom;
 
     @ManyToOne
-    @JoinColumn(name="userId")
+    @JoinColumn(name="writeUserId")
     private User user;
 
     private String chatContent;

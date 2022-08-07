@@ -24,8 +24,17 @@ public class Comment {
     @JoinColumn(name="userId")
     private User user;
 
-    private LocalDateTime commentContent;
+    private String commentContent;
     private LocalDateTime commentCreateTime;
     private int state;
 
+    public static Comment toEntity(User user, Post post, String commentContent) {
+        Comment comment = new Comment();
+        comment.setPost(post);
+        comment.setUser(user);
+        comment.setCommentContent(commentContent);
+        comment.setCommentCreateTime(LocalDateTime.now());
+        comment.setState(0);
+        return comment;
+    }
 }

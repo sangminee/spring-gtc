@@ -16,8 +16,19 @@ public class ChatRoom {
 
     @ManyToOne
     @JoinColumn(name="userId")
-    private User user;
+    private User userId;
+
+    @ManyToOne
+    @JoinColumn(name="fromUserId")
+    private User fromUserId;
 
     private int state;
 
+    public static ChatRoom toEntity(User user, User fromUser) {
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setUserId(user);
+        chatRoom.setFromUserId(fromUser);
+        chatRoom.setState(0);
+        return chatRoom;
+    }
 }
