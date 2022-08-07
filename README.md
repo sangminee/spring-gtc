@@ -4,6 +4,7 @@
 
 ## E-R Diagram
 
+https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 
 ## 사용 기술
 
