@@ -8,7 +8,7 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 ![그릿지테스트 ERD](https://user-images.githubusercontent.com/81500474/183299007-8a23c791-56c3-4860-a76f-4c450093a502.png)
 
 ## 사용 기술
-
+Spring boot, Spring Data Jpa, Swagger, AWS RDS  
 
 ## 폴더 구조  
 
