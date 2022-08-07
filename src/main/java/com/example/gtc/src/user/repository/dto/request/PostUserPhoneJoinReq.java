@@ -33,4 +33,7 @@ public class PostUserPhoneJoinReq {
 
     @ApiModelProperty(notes = "동의유무를 입력해 주세요.",example = "Y")
     private String agree;
+
+    @ApiModelProperty(notes = "유저 유형을 입력해 주세요.",example = "0")
+    private int userType;
 }

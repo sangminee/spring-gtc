@@ -317,11 +317,13 @@ public class UserServiceImpl implements UserService{
                     myfollowing.getFollowingNickname(),
                     myfollowing.getAgree(),
                     myfollowing.getState());
+
             PostFollowerRes getTheotherFollowing = new PostFollowerRes("상대방이 가지고 있는 유저 정보입니다.",
                     theotherFollowing.getUser().getNickname(),
                     theotherFollowing.getFollowingNickname(),
                     theotherFollowing.getAgree(),
                     theotherFollowing.getState());
+
             List list = new ArrayList();
             list.add(getMyFollowing);
             list.add(getTheotherFollowing);

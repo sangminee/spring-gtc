@@ -45,6 +45,7 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_EMAIL(false, 2020, "이메일 형식을 확인해주세요."),
     POST_USERS_INVALID_PHONE(false, 2021, "핸드폰 번호 형식을 확인해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2022, "비밀번호 형식을 확인해주세요."),
+    POST_USERS_INVALID_USER_TYPE(false, 2023, "유저타입을 정확히 입력해주세요.(0: 일반유저, 1: 관리자)"),
 
     POST_USERS_EXISTS_EMAIL(false,2030,"중복된 이메일입니다."),
     POST_USERS_EXISTS_PHONE(false,2031,"중복된 번호입니다."),

@@ -27,4 +27,13 @@ public class Chat{
     private LocalDateTime messageCreateTime;
     private int state;
 
+    public static Chat toEntity(ChatRoom chatRoom, User user, String chatContent) {
+        Chat chat = new Chat();
+        chat.setChatRoom(chatRoom);
+        chat.setUser(user);
+        chat.setChatContent(chatContent);
+        chat.setMessageCreateTime(LocalDateTime.now());
+        chat.setState(0);
+        return chat;
+    }
 }

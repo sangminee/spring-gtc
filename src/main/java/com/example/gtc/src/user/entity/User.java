@@ -41,6 +41,7 @@ public class User {
     private LocalDateTime userUpdateNameTime;
     private String agree;
 
+    private int userType;
     private int joinType;
     private int state;
 
@@ -54,7 +55,7 @@ public class User {
         user.setBirth(postUserReq.getBirth());
         user.setUserCreateTime(LocalDateTime.now());
         user.setAgree(postUserReq.getAgree());
-
+        user.setUserType(postUserReq.getUserType());
         return user;
     }
 }

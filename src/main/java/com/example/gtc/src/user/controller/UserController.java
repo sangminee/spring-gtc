@@ -94,6 +94,10 @@ public class UserController {
         if(postUserPhoneReq.getBirth() == 0){
             return new BaseResponse<>(POST_USERS_EMPTY_BIRTH);
         }
+        // 8. 유저 타입 정보 x
+        if(postUserPhoneReq.getUserType() != 0 || postUserPhoneReq.getUserType() != 1){
+            return new BaseResponse<>(POST_USERS_INVALID_USER_TYPE);
+        }
 
        try{
         PostJoinUserRes postUserRes = userService.createUserPhone(postUserPhoneReq);
