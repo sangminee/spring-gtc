@@ -2,7 +2,6 @@ package com.example.gtc.src.post.controller;
 
 import com.example.gtc.config.BaseException;
 import com.example.gtc.config.BaseResponse;
-import com.example.gtc.src.post.entity.PostLike;
 import com.example.gtc.src.post.repository.dto.request.*;
 import com.example.gtc.src.post.repository.dto.response.*;
 import com.example.gtc.src.post.service.PostServiceImpl;

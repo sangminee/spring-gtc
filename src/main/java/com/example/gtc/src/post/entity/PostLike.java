@@ -1,6 +1,5 @@
 package com.example.gtc.src.post.entity;
 
-import com.example.gtc.src.comment.entity.Comment;
 import com.example.gtc.src.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;

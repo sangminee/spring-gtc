@@ -5,12 +5,10 @@ import com.example.gtc.src.chat.entity.Chat;
 import com.example.gtc.src.chat.entity.ChatRoom;
 import com.example.gtc.src.chat.repository.ChatJpaRepository;
 import com.example.gtc.src.chat.repository.ChatRoomJpaRepository;
+import com.example.gtc.src.chat.repository.dto.response.GetChatRes;
 import com.example.gtc.src.chat.repository.dto.response.GetChatRoomRes;
 import com.example.gtc.src.chat.repository.dto.response.PostChatRes;
 import com.example.gtc.src.chat.repository.dto.response.PostChatRoomRes;
-import com.example.gtc.src.comment.entity.CommentLike;
-import com.example.gtc.src.comment.repository.dto.response.PostSuccessRes;
-import com.example.gtc.src.post.repository.dto.response.GetPost;
 import com.example.gtc.src.user.entity.User;
 import com.example.gtc.src.user.repository.UserJpaRepository;
 import org.slf4j.Logger;
@@ -108,6 +106,35 @@ public class ChatServiceImpl implements ChatService{
                 }
             }
             return myChatRoom;
+        }catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    public List<GetChatRes> getChats(Long userId, Long chatRoomId) throws BaseException {
+        Optional<User> user = userJpaRepository.findByUserId(userId);
+        if(user.isEmpty()){
+            throw new BaseException(INVALID_USER_JWT);
+        }
+        Optional<ChatRoom> chatRoom = chatRoomJpaRepository.findById(chatRoomId);
+        if(chatRoom.isEmpty()){
+
+        }
+        List<Chat> allChat = chatJpaRepository.findAll();
+        try{
+            List<GetChatRes> getChats = new ArrayList<>();
+            for(int i=0; i< allChat.size(); i++){
+                if(allChat.get(i).getChatRoom().equals(chatRoom.get())){
+                    GetChatRes getChatRes = new GetChatRes();
+                    getChatRes.setChatRoomId(chatRoomId);
+                    getChatRes.setWriteNickname(allChat.get(i).getUser().getNickname());
+                    getChatRes.setChatContent(allChat.get(i).getChatContent());
+                    getChatRes.setMessageCreateTime(allChat.get(i).getMessageCreateTime());
+                    getChats.add(getChatRes);
+                }
+            }
+            return getChats;
         }catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -1,8 +1,7 @@
 package com.example.gtc.src.chat.service;
 
 import com.example.gtc.config.BaseException;
-import com.example.gtc.src.chat.entity.Chat;
-import com.example.gtc.src.chat.entity.ChatRoom;
+import com.example.gtc.src.chat.repository.dto.response.GetChatRes;
 import com.example.gtc.src.chat.repository.dto.response.GetChatRoomRes;
 import com.example.gtc.src.chat.repository.dto.response.PostChatRes;
 import com.example.gtc.src.chat.repository.dto.response.PostChatRoomRes;
@@ -15,4 +14,6 @@ public interface ChatService {
 
     PostChatRes createChat(Long userId, Long chatRoomId, String chatContent) throws BaseException;
     List<GetChatRoomRes> getChatRoom(Long userId) throws BaseException;
+
+    List<GetChatRes> getChats(Long userId, Long chatRoomId)  throws BaseException;
 }

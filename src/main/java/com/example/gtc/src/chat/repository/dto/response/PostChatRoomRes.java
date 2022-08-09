@@ -1,6 +1,5 @@
 package com.example.gtc.src.chat.repository.dto.response;
 
-import com.example.gtc.src.user.entity.User;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

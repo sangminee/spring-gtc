@@ -3,7 +3,6 @@ package com.example.gtc.src.admin.controller;
 import com.example.gtc.config.BaseException;
 import com.example.gtc.config.BaseResponse;
 import com.example.gtc.src.admin.service.AdminServiceImpl;
-import com.example.gtc.src.chat.repository.dto.response.PostChatRoomRes;
 import com.example.gtc.src.post.repository.dto.response.GetPost;
 import com.example.gtc.src.user.entity.User;
 import com.example.gtc.utils.JwtService;

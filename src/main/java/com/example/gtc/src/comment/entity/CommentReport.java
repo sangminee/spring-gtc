@@ -1,7 +1,6 @@
 package com.example.gtc.src.comment.entity;
 
 import com.example.gtc.global.ReportList;
-import com.example.gtc.src.post.entity.Post;
 import com.example.gtc.src.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,11 +2,8 @@ package com.example.gtc.src.chat.controller;
 
 import com.example.gtc.config.BaseException;
 import com.example.gtc.config.BaseResponse;
-import com.example.gtc.src.chat.entity.Chat;
-import com.example.gtc.src.chat.entity.ChatRoom;
 import com.example.gtc.src.chat.repository.dto.response.*;
 import com.example.gtc.src.chat.service.ChatServiceImpl;
-import com.example.gtc.src.post.repository.dto.response.GetPost;
 import com.example.gtc.utils.JwtService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +33,6 @@ public class ChatController {
         this.chatService = chatService;
         this.jwtService = jwtService;
     }
-
 
     /**
      * 채팅 방 생성 API
@@ -119,9 +115,26 @@ public class ChatController {
     }
 
     /**
-     * 채팅 내용 보기 API
+     * 채팅 보기 API
      * [GET]  http://localhost:8080/chat/{chatRoomId}
      * @return BaseResponse<?>
      */
+    @ApiOperation(value = "채팅 방 목록 조회 ")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK",response = GetChatRes.class),
+            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+    })
+    @GetMapping("/chat/{chatRoomId}")
+    public BaseResponse<?> getChats(@PathVariable Long chatRoomId){
+        try{
+            // jwt
+            Long userId = jwtService.getUserIdx();
+            List<GetChatRes> allChat = chatService.getChats(userId, chatRoomId);
+            return new BaseResponse<>(allChat);
+        } catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
     
 }

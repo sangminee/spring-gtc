@@ -1,7 +1,6 @@
 package com.example.gtc.src.comment.service;
 
 import com.example.gtc.config.BaseException;
-import com.example.gtc.src.comment.repository.dto.response.DeleteCommentRes;
 import com.example.gtc.src.comment.repository.dto.response.PostCommentReportRes;
 import com.example.gtc.src.comment.repository.dto.response.PostCommentRes;
 import com.example.gtc.src.comment.repository.dto.response.PostSuccessRes;
