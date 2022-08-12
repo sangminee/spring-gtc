@@ -5,7 +5,7 @@
 ## E-R Diagram
 
 https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
-![그릿지테스트 ERD](https://user-images.githubusercontent.com/81500474/183299007-8a23c791-56c3-4860-a76f-4c450093a502.png)
+![erd 그릿지](https://user-images.githubusercontent.com/81500474/184348347-192762fa-4d33-48ec-a442-6b6bbe8a728d.png)
 
 
 ## 폴더 구조  
