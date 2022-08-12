@@ -13,9 +13,10 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 ![image](https://user-images.githubusercontent.com/81500474/183300197-039f8bd7-c4db-462b-a189-7eb89177e2fa.png)
 
 ## 사용 기술
-Spring boot <br>
-Spring Data Jpa <br>
-Swagger <br>
-AWS RDS <br>
-AWS EC2 <br>
+
+- Spring boot <br>
+- Spring Data Jpa <br>
+- Swagger <br>
+- AWS RDS <br>
+- AWS EC2 <br>
 
