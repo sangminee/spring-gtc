@@ -25,3 +25,11 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 - USER : 휴대폰 인증 
 
 --!>
+
+## Commit & Convention 적용 
+https://minee.tistory.com/47
+
+## 이슈 해결
+
+1. user은 이미 MySQL에 예약어로 존재 
+org.hibernate.tool.schema.spi.commandacceptanceexception: error executing ddl "create user...... 
