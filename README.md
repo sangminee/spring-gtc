@@ -25,5 +25,5 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 https://minee.tistory.com/47
 
 ## 이슈 해결
-1. user은 이미 MySQL에 예약어로 존재 
+1. user은 이미 MySQL에 예약어로 존재 <br>
 org.hibernate.tool.schema.spi.commandacceptanceexception: error executing ddl "create user...... 
