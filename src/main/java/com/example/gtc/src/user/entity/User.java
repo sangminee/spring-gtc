@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name ="USERS")
 public class User {
 
     @Id
@@ -24,17 +22,15 @@ public class User {
     private Long userId;  // 시스템이 저장하는 id
 
     private String nickname;
-
     private String email;
     private String phone;
-
     private String password;
     private String name;
     private int birth;
 
-    private String userImgUrl;
-    private String website;
-    private String bio;
+    @Embedded
+    private UserInfo userInfo;
+
     private LocalDateTime userCreateTime;
     private LocalDateTime loginTime;
     private int userUpdateNameCount;
@@ -44,7 +40,6 @@ public class User {
     private int userType;
     private int joinType;
     private int state;
-
 
     public static User toEntity(PostUserPhoneJoinReq postUserReq) {
         User user = new User();
@@ -56,6 +51,8 @@ public class User {
         user.setUserCreateTime(LocalDateTime.now());
         user.setAgree(postUserReq.getAgree());
         user.setUserType(postUserReq.getUserType());
+        UserInfo userInfo = new UserInfo("","","");
+        user.setUserInfo(userInfo);
         return user;
     }
 }
