@@ -20,6 +20,7 @@ bin/
 application.properties
 Secret
 KakaoServiceImpl.java
+ConfirmService.java
 
 ### IntelliJ IDEA ###
 .idea
