@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +78,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public List<GetPost> getPostsbyAdmin(Long userId) throws BaseException {
+    public List<GetPost> getPostsbyAdmin(Long userId, Pageable pageable) throws BaseException {
         Optional<User> user = userJpaRepository.findByUserId(userId);
         if(user.isEmpty() && user.get().getUserType()==0){
             throw new BaseException(INVALID_USER_JWT);

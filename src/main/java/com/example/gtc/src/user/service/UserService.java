@@ -12,7 +12,7 @@ import com.example.gtc.src.user.repository.dto.request.PostLoginPhoneReq;
 import java.util.List;
 
 public interface UserService {
-    GetUserProfileRes retrieveUserProfile(String userId, Long id) throws BaseException;
+    GetUserProfileRes retrieveUserProfile(Long userId, String nickname) throws Exception;
 
     PostJoinUserRes createUserPhone(PostUserPhoneJoinReq postUserReq) throws BaseException;
     PostJoinUserRes createUserEmail(PostUserEmailJoinReq postUserReq) throws BaseException;

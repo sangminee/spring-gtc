@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -44,7 +45,7 @@ public class AdminController {
             @ApiResponse(code = 3021, message = "정지된 계정입니다.")
     })
     @GetMapping("/admin/user")
-    public BaseResponse<?> getUsersbyAdmin(){
+    public BaseResponse<?> getUsersbyAdmin(Pageable pageable){
         try{
             // jwt
             Long userId = jwtService.getUserIdx();
@@ -73,11 +74,11 @@ public class AdminController {
             @ApiResponse(code = 3021, message = "정지된 계정입니다.")
     })
     @GetMapping("/admin/post")
-    public BaseResponse<?> getPostsbyAdmin(){
+    public BaseResponse<?> getPostsbyAdmin(Pageable pageable){
         try{
             // jwt
             Long userId = jwtService.getUserIdx();
-            List<GetPost> allPost = adminService.getPostsbyAdmin(userId);
+            List<GetPost> allPost = adminService.getPostsbyAdmin(userId, pageable);
             return new BaseResponse<>(allPost);
         } catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());

@@ -8,6 +8,7 @@ import com.example.gtc.src.user.repository.dto.response.PostLoginRes;
 import com.example.gtc.src.user.repository.dto.request.PostUserPhoneJoinReq;
 import com.example.gtc.src.user.repository.dto.response.GetUserProfileRes;
 import com.example.gtc.src.user.repository.dto.response.PostJoinUserRes;
+import com.example.gtc.src.user.service.ConfirmService;
 import com.example.gtc.src.user.service.UserServiceImpl;
 import com.example.gtc.utils.JwtService;
 import com.sun.istack.NotNull;
@@ -15,9 +16,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.Setter;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -27,17 +31,20 @@ import static com.example.gtc.utils.ValidationRegex.*;
 
 @RestController
 @Api(tags ="유저 API ")
+@Setter
 public class UserController {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserServiceImpl userService;
     private final JwtService jwtService;
+    private final ConfirmService confirmService;
 
     @Autowired  // 의존성 주입을 의한 것
-    public UserController(UserServiceImpl userService, JwtService jwtService) {
+    public UserController(UserServiceImpl userService, JwtService jwtService, ConfirmService confirmService) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.confirmService = confirmService;
     }
 
     // 1. create
@@ -64,7 +71,7 @@ public class UserController {
 
     })
     @PostMapping("/join-phone")
-    public BaseResponse<PostLoginRes> createUser(@RequestBody @NotNull PostUserPhoneJoinReq postUserPhoneReq){
+    public BaseResponse<PostLoginRes> createUser(@RequestBody @NotNull PostUserPhoneJoinReq postUserPhoneReq) throws CoolsmsException {
         // validation
         // 1. name 입력 x
         if(postUserPhoneReq.getName().equals("")){
@@ -95,20 +102,52 @@ public class UserController {
             return new BaseResponse<>(POST_USERS_EMPTY_BIRTH);
         }
         // 8. 유저 타입 정보 x
-        if(postUserPhoneReq.getUserType() != 0 || postUserPhoneReq.getUserType() != 1){
+        if(postUserPhoneReq.getUserType() != 0 && postUserPhoneReq.getUserType() != 1){
             return new BaseResponse<>(POST_USERS_INVALID_USER_TYPE);
         }
 
        try{
-        PostJoinUserRes postUserRes = userService.createUserPhone(postUserPhoneReq);
-        return new BaseResponse(postUserRes);
+           PostJoinUserRes postUserRes = userService.createUserPhone(postUserPhoneReq);
+           return new BaseResponse(postUserRes);
+
         }catch(BaseException exception){
             return new BaseResponse((exception.getStatus()));
         }
     }
 
-    // 2. read
 
+    static String checkPhone;
+    /**
+     * 휴대폰 인증 API  (핸드폰)
+     * [POST] http://localhost:8080/phone-confirm
+     * @return BaseResponse<PostLoginRes>
+     */
+    @ApiOperation(value = "휴대폰 인증")
+    @ApiResponses({  // Response Message에 대한 Swagger 설명
+            @ApiResponse(code = 1000, message = "OK"),
+            @ApiResponse(code = 2013, message = "사용자 이름을 입력해주세요.")
+    })
+    @ResponseBody
+    @PostMapping("/phone-confirm")
+    public boolean phoneConfirm(@RequestBody Map<String, String> map) throws CoolsmsException {
+        if(map.get("phone-confirm").equals(this.checkPhone)){
+            // userService.updatePhoneConfirm();
+            System.out.println("인증이 완료됨");
+            this.checkPhone="";
+            return true;
+        }
+        return false;
+    }
+
+    // http://localhost:8080/phone-confirm?phone=
+    @ApiOperation(value = "휴대폰 인증")
+    @GetMapping("/phone-confirm")
+    public String phoneConfirm(@RequestParam("phone") String phone) throws CoolsmsException {
+        this.checkPhone = confirmService.phoneConfirm(phone);
+        return this.checkPhone;
+    }
+
+     // 2. read
     /**
      * 로그인 API  (핸드폰)
      * [POST] http://localhost:8080/logIn-phone
@@ -162,16 +201,20 @@ public class UserController {
             @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
     })
     @ApiOperation(value = "프로필 보기", notes = "프로필 보기 입니다.")
-    public BaseResponse<GetUserProfileRes> retrieveUserProfile(@PathVariable("nickname") String nickname){
-        try{
-            Long userId = jwtService.getUserIdx();
-            System.out.println("userId : "+userId);
+    public ResponseEntity<GetUserProfileRes> retrieveUserProfile(@PathVariable("nickname") String nickname) throws Exception {
+        Long userId = jwtService.getUserIdx();
+        GetUserProfileRes getUserProfileRes = userService.retrieveUserProfile(userId, nickname);
+        return ResponseEntity.ok(getUserProfileRes);
 
-            GetUserProfileRes getUserProfileRes = userService.retrieveUserProfile(nickname,userId);
-            return new BaseResponse<>(getUserProfileRes);
-        } catch(BaseException exception){
-           return new BaseResponse<>((exception.getStatus()));
-       }
+//        try{
+//            Long userId = jwtService.getUserIdx();
+//            System.out.println("userId : "+userId);
+//
+//            GetUserProfileRes getUserProfileRes = userService.retrieveUserProfile(nickname,userId);
+//            return new BaseResponse<>(getUserProfileRes);
+//        } catch(BaseException exception){
+//           return new BaseResponse<>((exception.getStatus()));
+//       }
     }
 
     // 3. update

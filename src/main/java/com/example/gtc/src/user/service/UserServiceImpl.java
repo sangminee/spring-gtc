@@ -41,16 +41,16 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public GetUserProfileRes retrieveUserProfile(String nickname, Long userId) throws BaseException{
+    public GetUserProfileRes retrieveUserProfile(Long userId, String nickname) throws Exception {
         Optional<User> user = userJpaRepository.findByNickname(nickname);
-        if(user.get().getUserId().equals(userId)){
-            GetUserProfileRes getUserProfileRes = new GetUserProfileRes();
-            getUserProfileRes.setNickname(user.get().getNickname());
-            getUserProfileRes.setName(user.get().getName());
-            return getUserProfileRes;
-        }else{
-            throw new BaseException(INVALID_USER_JWT);
-        }
+        Optional<User> getUser
+                = Optional.ofNullable(userJpaRepository.findByUserId(user.get().getUserId()).orElseThrow(() -> new BaseException(INVALID_USER_JWT)));
+        return new GetUserProfileRes(user.get().getNickname(),user.get().getName());
+//        if(user.get().getUserId().equals(userId)){
+//            return new GetUserProfileRes(user.get().getNickname(),user.get().getName());
+//        }else{
+//            throw new BaseException(INVALID_USER_JWT);
+//        }
     }
 
     @Override
@@ -162,11 +162,8 @@ public class UserServiceImpl implements UserService{
                 // 비밀번호 변경
                 user.get().setPassword(newPassword);
                 userJpaRepository.save(user.get());
-                return new PostEditUserRes("비밀번호가 변경되었습니다.", user.get().getNickname(),
-                        user.get().getName(),password,
-                        user.get().getUserImgUrl(),user.get().getWebsite(),
-                        user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
-                        user.get().getAgree(), user.get().getState());
+
+                return new PostEditUserRes("비밀번호가 변경되었습니다.", user.get());
 
             }else{
                 throw new BaseException(FAILED_TO_PASSWORD);
@@ -191,13 +188,11 @@ public class UserServiceImpl implements UserService{
     public PostEditUserRes editUserImg(Long userId, String userImgUrl) throws BaseException {
         Optional<User> user = userJpaRepository.findByUserId(userId);
         if(!user.isEmpty() && user.get().getState()==0 || user.get().getState()==1){
-            user.get().setUserImgUrl(userImgUrl);
+            user.get().getUserInfo().setUserImgUrl(userImgUrl);
             userJpaRepository.save(user.get());
-            return new PostEditUserRes("사용자 사진이 변경되었습니다.", user.get().getNickname(),
-                    user.get().getName(),this.decryptPassword(user.get()),
-                    user.get().getUserImgUrl(),user.get().getWebsite(),
-                    user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
-                    user.get().getAgree(), user.get().getState());
+
+            user.get().setPassword(this.decryptPassword(user.get()));
+            return new PostEditUserRes("사용자 사진이 변경되었습니다.",user.get());
         }else{
             throw new BaseException(INVALID_USER_JWT);
         }
@@ -207,13 +202,11 @@ public class UserServiceImpl implements UserService{
     public PostEditUserRes editWebsite(Long userId, String website) throws BaseException {
         Optional<User> user = userJpaRepository.findByUserId(userId);
         if(!user.isEmpty() && user.get().getState()==0 || user.get().getState()==1){
-            user.get().setWebsite(website);
+            user.get().getUserInfo().setWebsite(website);
             userJpaRepository.save(user.get());
-            return new PostEditUserRes("웹사이트가 변경되었습니다.", user.get().getNickname(),
-                    user.get().getName(),this.decryptPassword(user.get()),
-                    user.get().getUserImgUrl(),user.get().getWebsite(),
-                    user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
-                    user.get().getAgree(), user.get().getState());
+
+            user.get().setPassword(this.decryptPassword(user.get()));
+            return new PostEditUserRes("웹사이트가 변경되었습니다.", user.get());
         }else{
             throw new BaseException(INVALID_USER_JWT);
         }
@@ -223,13 +216,10 @@ public class UserServiceImpl implements UserService{
     public PostEditUserRes editBio(Long userId, String bio) throws BaseException {
         Optional<User> user = userJpaRepository.findByUserId(userId);
         if(!user.isEmpty() && user.get().getState()==0 || user.get().getState()==1){
-            user.get().setBio(bio);
+            user.get().getUserInfo().setBio(bio);
             userJpaRepository.save(user.get());
-            return new PostEditUserRes("소개가 변경되었습니다.", user.get().getNickname(),
-                    user.get().getName(),this.decryptPassword(user.get()),
-                    user.get().getUserImgUrl(),user.get().getWebsite(),
-                    user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
-                    user.get().getAgree(), user.get().getState());
+            user.get().setPassword(this.decryptPassword(user.get()));
+            return new PostEditUserRes("소개가 변경되었습니다.", user.get());
         }else{
             throw new BaseException(INVALID_USER_JWT);
         }
@@ -253,11 +243,9 @@ public class UserServiceImpl implements UserService{
                     user.get().setNickname(changeNickname);
                     user.get().setUserUpdateNameTime(LocalDateTime.now());
                     userJpaRepository.save(user.get());
-                    return new PostEditUserRes("사용자 이름이 변경되었습니다.", user.get().getNickname(),
-                            user.get().getName(),this.decryptPassword(user.get()),
-                            user.get().getUserImgUrl(),user.get().getWebsite(),
-                            user.get().getBio(), user.get().getUserUpdateNameCount(), user.get().getUserUpdateNameTime(),
-                            user.get().getAgree(), user.get().getState());
+
+                    user.get().setPassword(this.decryptPassword(user.get()));
+                    return new PostEditUserRes("사용자 이름이 변경되었습니다.", user.get());
 
                 }else{
                     throw new BaseException(FAILED_TO_NICKNAME_COUNT);
