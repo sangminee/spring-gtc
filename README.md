@@ -3,6 +3,7 @@
   - 1차 개발 : 2022. 07. 25 ~ 2022. 08. 07 (2주)
   - 리팩토링 + 기능 추가 : 2023. 11. 06 ~   
 
+<!-- 
 ## E-R Diagram
 
 https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
@@ -25,3 +26,5 @@ https://www.erdcloud.com/d/2xA9vhtHLcpoqMCcC
 ## 이슈 해결
 1. user은 이미 MySQL에 예약어로 존재 <br>
 org.hibernate.tool.schema.spi.commandacceptanceexception: error executing ddl "create user...... 
+
+-->
