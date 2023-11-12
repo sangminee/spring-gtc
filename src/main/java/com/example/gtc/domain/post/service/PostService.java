@@ -1,10 +1,10 @@
 package com.example.gtc.domain.post.service;
 
 import com.example.gtc.common.config.BaseException;
-import com.example.gtc.domain.post.repository.dto.request.PostTagReq;
-import com.example.gtc.domain.post.repository.dto.request.PostWriteReq;
-import com.example.gtc.domain.post.repository.dto.response.GetPost;
-import com.example.gtc.domain.post.repository.dto.response.PostRes;
+import com.example.gtc.domain.post.domain.dto.request.PostTagReq;
+import com.example.gtc.domain.post.domain.dto.request.PostWriteReq;
+import com.example.gtc.domain.post.domain.dto.response.GetPost;
+import com.example.gtc.domain.post.domain.dto.response.PostRes;
 
 import java.util.List;
 

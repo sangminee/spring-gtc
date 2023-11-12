@@ -1,7 +1,7 @@
 package com.example.gtc.domain.admin.service;
 
 import com.example.gtc.common.config.BaseException;
-import com.example.gtc.domain.post.repository.dto.response.GetPost;
+import com.example.gtc.domain.post.domain.dto.response.GetPost;
 import com.example.gtc.domain.user.entity.User;
 
 import java.awt.print.Pageable;

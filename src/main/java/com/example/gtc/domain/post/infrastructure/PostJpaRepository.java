@@ -1,6 +1,6 @@
-package com.example.gtc.domain.post.repository;
+package com.example.gtc.domain.post.infrastructure;
 
-import com.example.gtc.domain.post.entity.Post;
+import com.example.gtc.domain.post.infrastructure.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

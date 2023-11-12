@@ -1,6 +1,6 @@
 package com.example.gtc.domain.chat.repository.dto.response;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "채팅")
+@Schema(description = "채팅")
 public class GetChatRes {
     private Long chatRoomId;
     private String writeNickname;

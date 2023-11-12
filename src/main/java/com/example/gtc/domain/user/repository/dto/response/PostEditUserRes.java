@@ -2,7 +2,7 @@ package com.example.gtc.domain.user.repository.dto.response;
 
 import com.example.gtc.domain.user.entity.User;
 import com.example.gtc.domain.user.entity.UserInfo;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "로그인")
+@Schema(description = "로그인")
 public class PostEditUserRes {
     private String message;
 

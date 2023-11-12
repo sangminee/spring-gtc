@@ -3,15 +3,16 @@ package com.example.gtc.domain.post.service;
 import com.example.gtc.common.config.BaseException;
 import com.example.gtc.common.global.ReportList;
 import com.example.gtc.common.global.ReportListJpaRepository;
-import com.example.gtc.domain.post.entity.*;
-import com.example.gtc.domain.post.repository.*;
-import com.example.gtc.domain.post.repository.dto.request.PostTagReq;
-import com.example.gtc.domain.post.repository.dto.request.PostWriteReq;
-import com.example.gtc.domain.post.repository.dto.response.GetPost;
-import com.example.gtc.domain.post.repository.dto.response.PostRes;
+import com.example.gtc.domain.post.infrastructure.*;
+import com.example.gtc.domain.post.domain.dto.request.PostTagReq;
+import com.example.gtc.domain.post.domain.dto.request.PostWriteReq;
+import com.example.gtc.domain.post.domain.dto.response.GetPost;
+import com.example.gtc.domain.post.domain.dto.response.PostRes;
+import com.example.gtc.domain.post.infrastructure.entity.*;
 import com.example.gtc.domain.user.entity.User;
 import com.example.gtc.domain.user.repository.UserJpaRepository;
 import com.example.gtc.common.utils.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.*;
 import static com.example.gtc.common.config.BaseResponseStatus.*;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -34,18 +36,6 @@ public class PostServiceImpl implements PostService{
     private final PostReportJpaRepository postReportJpaRepository;
     private final JwtService jwtService;
 
-    public PostServiceImpl(PostJpaRepository postJpaRepository, PhotoJpaRepository photoJpaRepository,
-                           PostLikeJpaRepository postLikeJpaRepository, PostTagJpaRepository postTagJpaRepository, UserJpaRepository userJpaRepository, ReportListJpaRepository reportListJpaRepository, PostReportJpaRepository postReportJpaRepository, JwtService jwtService) {
-        this.postJpaRepository = postJpaRepository;
-        this.photoJpaRepository = photoJpaRepository;
-        this.postLikeJpaRepository = postLikeJpaRepository;
-        this.postTagJpaRepository = postTagJpaRepository;
-        this.userJpaRepository = userJpaRepository;
-        this.reportListJpaRepository = reportListJpaRepository;
-        this.postReportJpaRepository = postReportJpaRepository;
-        this.jwtService = jwtService;
-    }
-
     @Transactional
     @Override
     public PostRes createPost(Long userId, PostWriteReq postWriteReq) throws BaseException {
@@ -54,8 +44,8 @@ public class PostServiceImpl implements PostService{
             Post post = Post.toEntity(postWriteReq,user.get());
             postJpaRepository.save(post);
             for(int i=0; i< postWriteReq.getPhotoCount(); i++){
-                Photo photo = Photo.toEntity(postWriteReq.getQueue().poll(),post);
-                photoJpaRepository.save(photo);
+                PhotoEntity photoEntity = PhotoEntity.toEntity(postWriteReq.getQueue().poll(),post);
+                photoJpaRepository.save(photoEntity);
             }
             return new PostRes("게시글 작성이 완료되었습니다.");
 
@@ -223,7 +213,7 @@ public class PostServiceImpl implements PostService{
         Optional<Post> post = postJpaRepository.findById(postId);
 
         List<PostLike> allPostLike = postLikeJpaRepository.findAll();
-        List<Photo> allPostPhoto = photoJpaRepository.findAll();
+        List<PhotoEntity> allPostPhotoEntity = photoJpaRepository.findAll();
 
         if(post.isEmpty()){
             throw new BaseException(EMPTY_POST);
@@ -238,9 +228,9 @@ public class PostServiceImpl implements PostService{
             }
             ArrayList<String> photoUrlList = new ArrayList<>();
 
-            for(int i=0; i < allPostPhoto.size(); i++){
-                if(allPostPhoto.get(i).getPost().equals(post.get())){
-                    photoUrlList.add(allPostPhoto.get(i).getPhotoUrl());
+            for(int i = 0; i < allPostPhotoEntity.size(); i++){
+                if(allPostPhotoEntity.get(i).getPost().equals(post.get())){
+                    photoUrlList.add(allPostPhotoEntity.get(i).getPhotoUrl());
                 }
             }
 
@@ -262,7 +252,7 @@ public class PostServiceImpl implements PostService{
         Optional<User> user = userJpaRepository.findByUserId(userId);
         Optional<Post> post = postJpaRepository.findById(postId);
 
-        List<Photo> allPostPhoto = photoJpaRepository.findAll();
+        List<PhotoEntity> allPostPhotoEntity = photoJpaRepository.findAll();
         List<PostLike> allPostLike = postLikeJpaRepository.findAll();
 
         if(user.isEmpty()){
@@ -280,9 +270,9 @@ public class PostServiceImpl implements PostService{
                 }
             }
             ArrayList<String> photoUrlList = new ArrayList<String>();
-            for(int i=0; i<allPostPhoto.size(); i++){
-                if(allPostPhoto.get(i).getPost().equals(post.get())){
-                    photoUrlList.add(allPostPhoto.get(i).getPhotoUrl());
+            for(int i = 0; i< allPostPhotoEntity.size(); i++){
+                if(allPostPhotoEntity.get(i).getPost().equals(post.get())){
+                    photoUrlList.add(allPostPhotoEntity.get(i).getPhotoUrl());
                 }
             }
             return new GetPost(post.get().getPostId(),

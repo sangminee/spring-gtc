@@ -2,6 +2,7 @@ package com.example.gtc.domain.user.controller;
 
 import com.example.gtc.common.config.BaseException;
 import com.example.gtc.common.config.BaseResponse;
+import com.example.gtc.domain.chat.repository.dto.response.PostChatRoomRes;
 import com.example.gtc.domain.user.repository.dto.response.DeleteUserRes;
 import com.example.gtc.domain.user.repository.dto.response.PostEditUserRes;
 import com.example.gtc.domain.user.repository.dto.request.PostLoginPhoneReq;
@@ -12,11 +13,14 @@ import com.example.gtc.domain.user.repository.dto.response.PostJoinUserRes;
 import com.example.gtc.domain.user.service.ConfirmService;
 import com.example.gtc.domain.user.service.UserServiceImpl;
 import com.example.gtc.common.utils.JwtService;
-import com.sun.istack.NotNull;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.slf4j.Logger;
@@ -30,9 +34,10 @@ import java.util.Map;
 import static com.example.gtc.common.config.BaseResponseStatus.*;
 import static com.example.gtc.common.utils.ValidationRegex.*;
 
-@RestController
-@Api(tags ="유저 API ")
+@Tag(name ="유저 API ")
 @Setter
+@RestController
+@RequiredArgsConstructor
 public class UserController {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -40,13 +45,6 @@ public class UserController {
     private final UserServiceImpl userService;
     private final JwtService jwtService;
     private final ConfirmService confirmService;
-
-    @Autowired  // 의존성 주입을 의한 것
-    public UserController(UserServiceImpl userService, JwtService jwtService, ConfirmService confirmService) {
-        this.userService = userService;
-        this.jwtService = jwtService;
-        this.confirmService = confirmService;
-    }
 
     // 1. create
 
@@ -56,19 +54,19 @@ public class UserController {
      * @return BaseResponse<?>
      */
 
-    @ApiOperation(value = "회원가입")
+    @Operation(summary = "회원가입")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK",response = PostJoinUserRes.class),
-            @ApiResponse(code = 2012, message = "이름을 입력해주세요."),
-            @ApiResponse(code = 2013, message = "사용자 이름을 입력해주세요."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 2015, message = "생일을 입력해주세요."),
-            @ApiResponse(code = 2021, message = "핸드폰 번호 형식을 확인해주세요."),
-            @ApiResponse(code = 2022, message = "비밀번호 형식을 확인해주세요."),
-            @ApiResponse(code = 2031, message = "중복된 번호입니다."),
-            @ApiResponse(code = 3014, message = "중복된 핸드폰번호입니다."),
-            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
-            @ApiResponse(code = 3020, message = "약관동의가 필요합니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostJoinUserRes.class))),
+            @ApiResponse(responseCode = "2012", description = "이름을 입력해주세요."),
+            @ApiResponse(responseCode = "2013", description = "사용자 이름을 입력해주세요."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "2015", description = "생일을 입력해주세요."),
+            @ApiResponse(responseCode = "2021", description = "핸드폰 번호 형식을 확인해주세요."),
+            @ApiResponse(responseCode = "2022", description = "비밀번호 형식을 확인해주세요."),
+            @ApiResponse(responseCode = "2031", description = "중복된 번호입니다."),
+            @ApiResponse(responseCode = "3014", description = "중복된 핸드폰번호입니다."),
+            @ApiResponse(responseCode = "3016", description = "중복된 사용자이름입니다."),
+            @ApiResponse(responseCode = "3020", description = "약관동의가 필요합니다.")
 
     })
     @PostMapping("/join-phone")
@@ -123,10 +121,10 @@ public class UserController {
      * [POST] http://localhost:8080/phone-confirm
      * @return BaseResponse<PostLoginRes>
      */
-    @ApiOperation(value = "휴대폰 인증")
+    @Operation(summary = "휴대폰 인증")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "사용자 이름을 입력해주세요.")
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "사용자 이름을 입력해주세요.")
     })
     @ResponseBody
     @PostMapping("/phone-confirm")
@@ -141,7 +139,7 @@ public class UserController {
     }
 
     // http://localhost:8080/phone-confirm?phone=
-    @ApiOperation(value = "휴대폰 인증")
+    @Operation(summary = "휴대폰 인증")
     @GetMapping("/phone-confirm")
     public String phoneConfirm(@RequestParam("phone") String phone) throws CoolsmsException {
         this.checkPhone = confirmService.phoneConfirm(phone);
@@ -154,13 +152,13 @@ public class UserController {
      * [POST] http://localhost:8080/logIn-phone
      * @return BaseResponse<PostLoginRes>
      */
-    @ApiOperation(value = "로그인")
+    @Operation(summary = "로그인")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "사용자 이름을 입력해주세요."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 3015, message = "없는 아이디거나 비밀번호가 틀렸습니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "사용자 이름을 입력해주세요."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "3015", description = "없는 아이디거나 비밀번호가 틀렸습니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @ResponseBody
     @PostMapping("/logIn-phone")
@@ -196,12 +194,12 @@ public class UserController {
      */
     @GetMapping("/users/{nickname}")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Success"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
     })
-    @ApiOperation(value = "프로필 보기", notes = "프로필 보기 입니다.")
+    @Operation(summary = "프로필 보기", description = "프로필 보기 입니다.")
     public ResponseEntity<GetUserProfileRes> retrieveUserProfile(@PathVariable("nickname") String nickname) throws Exception {
         Long userId = jwtService.getUserIdx();
         GetUserProfileRes getUserProfileRes = userService.retrieveUserProfile(userId, nickname);
@@ -225,15 +223,15 @@ public class UserController {
      * [POST]  http://localhost:8080/users/edit-password
      * @return BaseResponse<PostEditUserRes>
      */
-    @ApiOperation(value = "비밀번호 변경")
+    @Operation(summary = "비밀번호 변경")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 2022, message = "비밀번호 형식을 확인해주세요."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다."),
-            @ApiResponse(code = 3030, message = "비밀번호 변경에 실패했습니다. 제대로된 값을 입력해 주세요."),
-            @ApiResponse(code = 4011, message = "비밀번호 암호화에 실패하였습니다.")
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "2022", description = "비밀번호 형식을 확인해주세요."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다."),
+            @ApiResponse(responseCode = "3030", description = "비밀번호 변경에 실패했습니다. 제대로된 값을 입력해 주세요."),
+            @ApiResponse(responseCode = "4011", description = "비밀번호 암호화에 실패하였습니다.")
     })
     @ResponseBody
     @PostMapping("/users/edit-password")
@@ -260,15 +258,15 @@ public class UserController {
      * [POST]  http://localhost:8080/users/edit-nickname
      * @return BaseResponse<PostEditUserRes>
      */
-    @ApiOperation(value = "사용자 이름 변경")
+    @Operation(summary = "사용자 이름 변경")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다."),
-            @ApiResponse(code = 3035, message = "사용자 이름 변경에 실패했습니다. 제대로된 값을 입력해 주세요."),
-            @ApiResponse(code = 3037, message = "2번이상 변경하셨습니다. 마지막 변경일에서 14일을 뒤에 시도하세요."),
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "3016", description = "중복된 사용자이름입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다."),
+            @ApiResponse(responseCode = "3035", description = "사용자 이름 변경에 실패했습니다. 제대로된 값을 입력해 주세요."),
+            @ApiResponse(responseCode = "3037", description = "2번이상 변경하셨습니다. 마지막 변경일에서 14일을 뒤에 시도하세요."),
     })
     @ResponseBody
     @PostMapping("/users/edit-nickname")
@@ -288,13 +286,13 @@ public class UserController {
      * [POST]  http://localhost:8080/users/edit-user-img
      * @return BaseResponse<PostEditUserRes>
      */
-    @ApiOperation(value = "프로필 사진 변경")
+    @Operation(summary = "프로필 사진 변경")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "3016", description = "중복된 사용자이름입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @ResponseBody
     @PostMapping("/users/edit-user-img")
@@ -313,13 +311,13 @@ public class UserController {
      * [POST]  http://localhost:8080/users/edit-website
      * @return BaseResponse<PostEditUserRes>
      */
-    @ApiOperation(value = "웹사이트 변경")
+    @Operation(summary = "웹사이트 변경")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "3016", description = "중복된 사용자이름입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @ResponseBody
     @PostMapping("/users/edit-website")
@@ -338,13 +336,13 @@ public class UserController {
      * [POST]  http://localhost:8080/users/edit-bio
      * @return BaseResponse<PostEditUserRes>
      */
-    @ApiOperation(value = "소개 변경")
+    @Operation(summary = "소개 변경")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 1000, message = "OK"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 3016, message = "중복된 사용자이름입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "1000", description = "OK"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "3016", description = "중복된 사용자이름입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @ResponseBody
     @PostMapping("/users/edit-bio")
@@ -365,12 +363,12 @@ public class UserController {
      * [DELETE]  http://localhost:8080/users/{nickname}
      */
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Success"),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 2014, message = "비밀번호를 입력해주세요."),
-            @ApiResponse(code = 3040, message = "계정삭제에 실패했습니다.")
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "2014", description = "비밀번호를 입력해주세요."),
+            @ApiResponse(responseCode = "3040", description = "계정삭제에 실패했습니다.")
     })
-    @ApiOperation(value = "계정 삭제")
+    @Operation(summary = "계정 삭제")
     @DeleteMapping("/users/{nickname}")
     public BaseResponse<DeleteUserRes> deleteUser(@RequestBody Map<String, String> map, @PathVariable("nickname") String nickname){
         // 비밀번호 입력 x

@@ -5,10 +5,14 @@ import com.example.gtc.common.config.BaseResponse;
 import com.example.gtc.domain.chat.repository.dto.response.*;
 import com.example.gtc.domain.chat.service.ChatServiceImpl;
 import com.example.gtc.common.utils.JwtService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.example.gtc.domain.user.entity.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +23,9 @@ import java.util.Map;
 
 import static com.example.gtc.common.config.BaseResponseStatus.*;
 
+@Tag(name ="채팅 API")
 @RestController
-@Api(tags ="채팅 API")
+@RequiredArgsConstructor
 public class ChatController {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -28,22 +33,16 @@ public class ChatController {
     private final ChatServiceImpl chatService;
     private final JwtService jwtService;
 
-    @Autowired
-    public ChatController(ChatServiceImpl chatService, JwtService jwtService) {
-        this.chatService = chatService;
-        this.jwtService = jwtService;
-    }
-
     /**
      * 채팅 방 생성 API
      * [POST]  http://localhost:8080/chat
      * @return BaseResponse<?>
      */
-    @ApiOperation(value = "채팅 방 생성")
+    @Operation(summary = "채팅 방 생성")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK",response = PostChatRoomRes.class),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostChatRoomRes.class))),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @PostMapping("/chat")
     public BaseResponse<?> createChatRoom(@RequestBody Map<String, String> map){
@@ -65,13 +64,13 @@ public class ChatController {
      * [POST]  http://localhost:8080/chat/{chatRoomId}
      * @return BaseResponse<?>
      */
-    @ApiOperation(value = "채팅하기")
+    @Operation(summary = "채팅하기")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK",response = PostChatRes.class),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다."),
-            @ApiResponse(code = 2040, message = "게시글 내용을 입력해 주세요."),
-            @ApiResponse(code = 2041, message = "글자수를 확인해 주세요.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostChatRes.class))),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다."),
+            @ApiResponse(responseCode = "2040", description = "게시글 내용을 입력해 주세요."),
+            @ApiResponse(responseCode = "2041", description = "글자수를 확인해 주세요.")
     })
     @PostMapping("/chat/{chatRoomId}")
     public BaseResponse<?> createChat(@RequestBody Map<String, String> map, @PathVariable Long chatRoomId){
@@ -96,11 +95,11 @@ public class ChatController {
      * [GET]  http://localhost:8080/chat
      * @return BaseResponse<?>
      */
-    @ApiOperation(value = "채팅 방 목록 조회 ")
+    @Operation(summary = "채팅 방 목록 조회 ")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK",response = GetChatRoomRes.class),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = GetChatRoomRes.class))),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @GetMapping("/chat")
     public BaseResponse<?> getChatRoom(){
@@ -119,11 +118,11 @@ public class ChatController {
      * [GET]  http://localhost:8080/chat/{chatRoomId}
      * @return BaseResponse<?>
      */
-    @ApiOperation(value = "채팅 방 목록 조회 ")
+    @Operation(summary = "채팅 방 목록 조회 ")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK",response = GetChatRes.class),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다."),
-            @ApiResponse(code = 3021, message = "정지된 계정입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = GetChatRes.class))),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다."),
+            @ApiResponse(responseCode = "3021", description = "정지된 계정입니다.")
     })
     @GetMapping("/chat/{chatRoomId}")
     public BaseResponse<?> getChats(@PathVariable Long chatRoomId){

@@ -2,11 +2,18 @@ package com.example.gtc.domain.comment.controller;
 
 import com.example.gtc.common.config.BaseException;
 import com.example.gtc.common.config.BaseResponse;
+import com.example.gtc.domain.chat.repository.dto.response.PostChatRoomRes;
 import com.example.gtc.domain.comment.repository.dto.response.*;
 import com.example.gtc.domain.comment.service.CommentServiceImpl;
-import com.example.gtc.domain.post.repository.dto.response.PostRes;
+import com.example.gtc.domain.post.domain.dto.response.PostRes;
 import com.example.gtc.common.utils.JwtService;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +22,10 @@ import java.util.Map;
 
 import static com.example.gtc.common.config.BaseResponseStatus.*;
 
+
+@Tag(name = "댓글 API")
 @RestController
-@Api(tags = "댓글 API")
+@RequiredArgsConstructor
 public class CommentController {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -24,22 +33,17 @@ public class CommentController {
     private final CommentServiceImpl commentService;
     private final JwtService jwtService;
 
-    public CommentController(CommentServiceImpl commentService, JwtService jwtService) {
-        this.commentService = commentService;
-        this.jwtService = jwtService;
-    }
-
     /**
      * 댓글 작성 API
      * [POST]  http://localhost:8080/post/{postId}/comment
      * @return BaseResponse<PostWriteRes>
      */
-    @ApiOperation(value = "댓글 작성")
+    @Operation(summary = "댓글 작성")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK", response = PostCommentRes.class),
-            @ApiResponse(code = 2012, message = "이름을 입력해주세요."),
-            @ApiResponse(code = 2050, message = "댓글 내용을 입력해 주세요."),
-            @ApiResponse(code = 2041, message = "글자수를 확인해 주세요.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostCommentRes.class))),
+            @ApiResponse(responseCode = "2012", description = "이름을 입력해주세요."),
+            @ApiResponse(responseCode = "2050", description = "댓글 내용을 입력해 주세요."),
+            @ApiResponse(responseCode = "2041", description = "글자수를 확인해 주세요.")
     })
     @PostMapping("/post/{postId}/comment")
     public BaseResponse<?> createComment(@PathVariable Long postId,
@@ -65,12 +69,12 @@ public class CommentController {
      * [POST]  http://localhost:8080/post/{postId}/comment/like
      * @return BaseResponse<PostWriteRes>
      */
-    @ApiOperation(value = "댓글 좋아요")
+    @Operation(summary = "댓글 좋아요")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK", response = PostSuccessRes.class),
-            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
-            @ApiResponse(code = 2006, message = "존재하지 않는 댓글입니다."),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostSuccessRes.class))),
+            @ApiResponse(responseCode = "2001", description = "JWT를 입력해주세요."),
+            @ApiResponse(responseCode = "2006", description = "존재하지 않는 댓글입니다."),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다.")
     })
     @PostMapping("/post/{postId}/comment/like")
     public BaseResponse<?> createCommentLike(@PathVariable Long postId,
@@ -93,10 +97,10 @@ public class CommentController {
      * [POST]  http://localhost:8080/post/{postId}/comment/report
      * @return BaseResponse<PostWriteRes>
      */
-    @ApiOperation(value = "댓글 신고")
+    @Operation(summary = "댓글 신고")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK", response = PostRes.class),
-            @ApiResponse(code = 2012, message = "이름을 입력해주세요.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostRes.class))),
+            @ApiResponse(responseCode = "2012", description = "이름을 입력해주세요.")
     })
     @PostMapping("/post/{postId}/comment/report")
     public BaseResponse<?> createCommentReport(@PathVariable Long postId,
@@ -129,12 +133,12 @@ public class CommentController {
      * [DELETE]  http://localhost:8080/post/{postId}/comment/like
      * @return BaseResponse<PostWriteRes>
      */
-    @ApiOperation(value = "댓글 좋아요 취소")
+    @Operation(summary = "댓글 좋아요 취소")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK", response = PostSuccessRes.class),
-            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
-            @ApiResponse(code = 2006, message = "존재하지 않는 댓글입니다."),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostSuccessRes.class))),
+            @ApiResponse(responseCode = "2001", description = "JWT를 입력해주세요."),
+            @ApiResponse(responseCode = "2006", description = "존재하지 않는 댓글입니다."),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다.")
     })
     @DeleteMapping("/post/{postId}/comment/like")
     public BaseResponse<?> deleteCommentLike(@PathVariable Long postId,
@@ -157,12 +161,12 @@ public class CommentController {
      * [DELETE]  http://localhost:8080/post/{postId}/comment/report
      * @return BaseResponse<PostWriteRes>
      */
-    @ApiOperation(value = "댓글 좋아요 취소")
+    @Operation(summary = "댓글 좋아요 취소")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK", response = PostSuccessRes.class),
-            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
-            @ApiResponse(code = 2006, message = "존재하지 않는 댓글입니다."),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostSuccessRes.class))),
+            @ApiResponse(responseCode = "2001", description = "JWT를 입력해주세요."),
+            @ApiResponse(responseCode = "2006", description = "존재하지 않는 댓글입니다."),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다.")
     })
     @DeleteMapping("/post/{postId}/comment/report")
     public BaseResponse<?> deleteCommentReport(@PathVariable Long postId,
@@ -185,12 +189,12 @@ public class CommentController {
      * [DELETE]  http://localhost:8080/post/{postId}/comment
      * @return BaseResponse<PostWriteRes>
      */
-    @ApiOperation(value = "댓글 하나 삭제")
+    @Operation(summary = "댓글 하나 삭제")
     @ApiResponses({  // Response Message에 대한 Swagger 설명
-            @ApiResponse(code = 200, message = "OK", response = PostSuccessRes.class),
-            @ApiResponse(code = 2001, message = "JWT를 입력해주세요."),
-            @ApiResponse(code = 2006, message = "존재하지 않는 댓글입니다."),
-            @ApiResponse(code = 2013, message = "권한이 없는 유저의 접근입니다.")
+            @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = PostSuccessRes.class))),
+            @ApiResponse(responseCode = "2001", description = "JWT를 입력해주세요."),
+            @ApiResponse(responseCode = "2006", description = "존재하지 않는 댓글입니다."),
+            @ApiResponse(responseCode = "2013", description = "권한이 없는 유저의 접근입니다.")
     })
     @DeleteMapping("/post/{postId}/comment")
     public BaseResponse<?> deleteComment(@PathVariable Long postId,

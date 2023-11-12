@@ -4,7 +4,7 @@ server:
 spring:
   h2:
     console:
-      enabled: true
+      enabled: true # /h2-console 설정
       path: /h2-console
   datasource:
     url: jdbc:h2:~/mem-data;

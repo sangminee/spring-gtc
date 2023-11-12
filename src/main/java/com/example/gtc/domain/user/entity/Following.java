@@ -4,7 +4,7 @@ import com.example.gtc.common.config.BaseException;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static com.example.gtc.common.config.BaseResponseStatus.*;
 

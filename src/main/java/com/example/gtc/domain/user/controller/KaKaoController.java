@@ -2,21 +2,19 @@ package com.example.gtc.domain.user.controller;
 
 import com.example.gtc.common.config.BaseException;
 import com.example.gtc.domain.user.service.KakaoServiceImpl;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
 
+@Tag(name ="카카오 로그인 API")
 @RestController
-@Api(tags ="카카오 로그인 API")
+@RequiredArgsConstructor
 public class KaKaoController {
 
     private final KakaoServiceImpl kakaoService;
-
-    public KaKaoController(KakaoServiceImpl kakaoService) {
-        this.kakaoService = kakaoService;
-    }
 
     @ResponseBody
     @GetMapping("/oauth/kakao")
