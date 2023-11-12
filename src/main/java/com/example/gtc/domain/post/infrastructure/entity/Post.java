@@ -1,11 +1,11 @@
-package com.example.gtc.domain.post.entity;
+package com.example.gtc.domain.post.infrastructure.entity;
 
-import com.example.gtc.domain.post.repository.dto.request.PostWriteReq;
+import com.example.gtc.domain.post.domain.dto.request.PostWriteReq;
 import com.example.gtc.domain.user.entity.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

@@ -1,6 +1,6 @@
-package com.example.gtc.domain.post.repository.dto.response;
+package com.example.gtc.domain.post.domain.dto.response;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "게시글 정보")
+@Schema(description = "게시글 정보")
 public class GetPost {
     private Long postId;
     private Long userId;

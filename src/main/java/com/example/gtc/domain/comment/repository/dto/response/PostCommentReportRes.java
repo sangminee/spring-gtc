@@ -1,6 +1,6 @@
 package com.example.gtc.domain.comment.repository.dto.response;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "신고 결과")
+@Schema(description = "신고 결과")
 public class PostCommentReportRes {
     private String message;
     private Long commentId;

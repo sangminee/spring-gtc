@@ -1,12 +1,12 @@
 package com.example.gtc.domain.user.entity;
 
 import com.example.gtc.domain.user.repository.dto.request.PostUserPhoneJoinReq;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

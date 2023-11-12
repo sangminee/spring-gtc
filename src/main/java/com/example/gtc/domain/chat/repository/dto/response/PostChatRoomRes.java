@@ -1,6 +1,6 @@
 package com.example.gtc.domain.chat.repository.dto.response;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "채팅 방 정보")
+@Schema(description = "채팅 방 정보")
 public class PostChatRoomRes {
     private Long chatRoomId;
     private String toNickname;
